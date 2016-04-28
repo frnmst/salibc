@@ -24,47 +24,68 @@
 
 #ifdef SALIBC_TEST
 
-int main (void )
+int
+main (void)
 {
 
-    Array arr0, arr1, arr2, arr3;
-    char a = 'f';
-    int b = 421;
-    double c = 3223.554;
-    long double d=123423509.99999999;
+  int i;
+  Array arr0, arr1, arr2, arr3, arr4, arr5;
+  char a = 'f';
+  int b = 421;
+  double c = 3223.554;
+  long double d = 123423509.99999999, e = 1435.654;
 
-    arr0 = array_new ( 50, sizeof ( char ) );
-    arr1 = array_new ( 50, sizeof ( int ) );
-    arr2 = array_new ( 50, sizeof ( double ) );
-    arr3 = array_new ( 50, sizeof ( long double ) );
+  arr0 = array_new (50, sizeof (char));
+  arr1 = array_new (50, sizeof (int));
+  arr2 = array_new (50, sizeof (double));
+  arr3 = array_new (50, sizeof (long double));
 
-    array_put ( arr0, 20, &a );
-    array_put ( arr1, 21, &b );
-    array_put ( arr2, 22, &c );
-    array_put ( arr3, 23, &d );
+  array_put (arr0, 20, &a);
+  array_put (arr1, 21, &b);
+  array_put (arr2, 22, &c);
+  array_put (arr3, 23, &d);
 
-    printf ( "%c\n", * ((char *) array_get ( arr0, 20 ) ) );
-    printf ( "%d\n", * ((int *) array_get ( arr1, 21 ) ) );
-    printf ( "%f\n", * ((double *) array_get ( arr2, 22 ) ) );
-    printf ( "%.9Lf\n", * ((long double *) array_get ( arr3, 23 ) ) );
+  printf ("%c\n", *((char *) array_get (arr0, 20)));
+  printf ("%d\n", *((int *) array_get (arr1, 21)));
+  printf ("%f\n", *((double *) array_get (arr2, 22)));
+  printf ("%.9Lf\n", *((long double *) array_get (arr3, 23)));
 
-    array_append ( arr0, &a );
-    array_append ( arr0, &a );
-    array_append ( arr0, &a );
-    printf ( "%c\n", * ((char *) array_get ( arr0, 50 ) ) );
-    printf ( "%c\n", * ((char *) array_get ( arr0, 51 ) ) );
-    printf ( "%c\n", * ((char *) array_get ( arr0, 52 ) ) );
+  array_append (arr0, &a);
+  array_append (arr0, &a);
+  array_append (arr0, &a);
+  printf ("%c\n", *((char *) array_get (arr0, 50)));
+  printf ("%c\n", *((char *) array_get (arr0, 51)));
+  printf ("%c\n", *((char *) array_get (arr0, 52)));
 
-    printf ( "%c\n", * ((char *) array_trim ( arr0 ) ) );
-    printf ( "%c\n", * ((char *) array_trim ( arr0 ) ) );
-    printf ( "%c\n", * ((char *) array_trim ( arr0 ) ) );
-    printf ( "null char: %c\n", * ((char *) array_trim ( arr0 ) ) );
+  printf ("%c\n", *((char *) array_trim (arr0)));
+  printf ("%c\n", *((char *) array_trim (arr0)));
+  printf ("%c\n", *((char *) array_trim (arr0)));
+  printf ("null char: %c\n", *((char *) array_trim (arr0)));
 
-    array_resize ( arr2, 0 );
-    if ( array_empty ( arr2 ) )
-        printf ("arr2's length is now equal to zero\n");
+  array_resize (arr2, 0);
+  if (array_empty (arr2))
+    printf ("arr2's length is now equal to zero\n");
 
-    return 0;
+  arr4 = array_new (3, sizeof (long double));
+  array_put (arr4, 0, &d);
+  array_put (arr4, 1, &d);
+  array_put (arr4, 2, &e);
+
+  printf ("Length before merge = %d\n", array_length (arr3));
+  if (array_null (arr5 = array_merge (arr3, arr4)))
+    printf ("Merge failed.\n");
+  printf ("Length after merge = %d\n", array_length (arr5));
+
+  for (i = 0; i < array_length (arr4); i++)
+    printf ("%Lf\n", *((long double *) array_get (arr4, i)));
+
+  if (*((long double *) array_get (arr4, 1)) >
+      *((long double *) array_get (arr4, 2)))
+    printf ("%Lf is greater than %Lf\n",
+	    *((long double *) array_get (arr4, 1)),
+	    *((long double *) array_get (arr4, 2)));
+
+  return 0;
 }
 
 #endif

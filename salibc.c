@@ -49,6 +49,10 @@ element_null (void *element)
   return (element == NULL);
 }
 
+/* Since memory is not always allocated consecutively, the following controls 
+ * may fail because the only check memory addresses and not if that memory 
+ * belongs to something else. */
+#ifdef MEMORY_OVERLAP_CHECK
 static bool
 memory_overlaps (void *chunk1, void *chunk2, size_t fullsize)
 {
@@ -66,6 +70,16 @@ memory_overlaps (void *chunk1, void *chunk2, size_t fullsize)
   return ((c1 <= c2) && (c1 + fullsize >= c2)) || ((c2 <= c1)
 						   && (c2 + fullsize >= c1));
 }
+#else
+static bool
+memory_overlaps (void *chunk1, void *chunk2, size_t fullsize)
+{
+  (void) chunk1;
+  (void) chunk2;
+  (void) fullsize;
+  return false;
+}
+#endif
 
 /*
  ******************
@@ -129,7 +143,6 @@ array_memcopy (Array a, int index, void *element)
   else
     return false;
 }
-
 
 bool
 array_null (Array a)
@@ -263,52 +276,6 @@ array_get (Array a, int index)
   return (array_indexpointer (a, index));
 }
 
-/* BUGGY PART--------------------------------------------- */
-void
-array_printelement (Array a, int index, const char *format)
-{
-  char buf[128];
-
-  sprintf (buf, format, *(array_indexpointer (a, index)));
-  printf ("%s", buf);
-/*    printf (format, * (array_indexpointer (a, index) ) );*/
-}
-
-void
-array_print (Array a, const char *format)
-{
-  int i;
-  assert (!array_empty (a));
-
-  for (i = 0; i < array_length (a); i++)
-    array_printelement (a, i, format);
-}
-
-bool
-array_orderedasc (Array a)
-{
-  int i;
-
-  /* With 1 or 0 elements the array is surely ordered. */
-  if (array_length (a) <= 1)
-    return true;
-
-  for (i = 0; i < array_length (a) - 1; i++)
-    {
-      if (*((double *) array_indexpointer (a, i)) < *
-	  ((double *) array_indexpointer (a, i + 1)))
-	printf ("in--OK\n");
-
-      if (memcmp (array_indexpointer (a, i + i), array_indexpointer (a, i),
-		  array_size (a)) < 0)
-	return false;
-    }
-
-  return true;
-}
-
-/* END OF BUGGY PART------------------------------------------ */
-
 Array
 array_copy (Array a1)
 {
@@ -381,6 +348,7 @@ array_resize (Array a, int new_length)
   return true;
 }
 
+/* This alters the input. */
 bool
 array_append (Array a, void *element)
 {
@@ -410,12 +378,33 @@ array_trim (Array a)
     return NULL;
 }
 
-/* Array array_merge (Array a1, Array a2) */
-/* Array array_sum (Array a ) */
-/* Array array_merge (Array a1, Array a2) */
-/* The following two return the pointer to the elements. If referenced they
- * return the value. */
-/* char *array_maxelement (Array a ) */
-/* char *array_minelement (Array a ) */
-/* ? array_ascorder (Array a) */
-/* ? array_dscorder (Array a) */
+/* A new array is created: new_array={a1,a2} */
+Array
+array_merge (Array a1, Array a2)
+{
+  Array new_array;
+  int i, j, total_length = array_length (a1) + array_length (a2);
+
+  /* Safety controls. */
+  if ((array_null (a1) && array_null (a2)) || (array_size (a1) !=
+					       array_size (a2)))
+    return NULL;
+
+  new_array = array_new (total_length, array_size (a1));
+  if (array_null (new_array))
+    return NULL;
+
+  for (i = 0; i < array_length (a1); i++)
+    if (!array_memcopy (new_array, i, array_indexpointer (a1, i)))
+      return NULL;
+  j = 0;
+  for (i = array_length (a1); i < total_length; i++)
+    {
+      if (!array_memcopy (new_array, i, array_indexpointer (a1, j)))
+	return NULL;
+      j++;
+    }
+
+  return new_array;
+}
+

@@ -23,6 +23,13 @@
 #ifndef SALIBC
 #define SALIBC
 
+/* Check C version. */
+#define ISOC99_SOURCE
+#define _POSIX_C_SOURCE 199309L
+#if __STDC_VERSION__ != 199901L
+#error "ANSI C99 not available"
+#endif
+
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -56,5 +63,6 @@ extern Array array_copy (Array a1);
 extern bool array_resize (Array a, int new_length);
 extern bool array_append (Array a, void *element);
 extern char *array_trim (Array a);
+extern Array array_merge (Array a1, Array a2);
 
 #endif
