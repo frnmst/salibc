@@ -23,7 +23,7 @@ LaTeX packages.
 
 The doxygen configuration file has been generated with the following:
 ```
-$doxygen -g doxy.conf
+$ doxygen -g doxy.conf
 ```
 
 and then edited with the options I thought were useful.
@@ -40,8 +40,9 @@ This will generate an executable file called `salibc.out`.
 ##Other
 
 `indent` and `clean` targets are also available as part of the make file.
+
 To be able to use the `indent` target, you need to install `indent` and 
-`splint`.
+`splint` packages.
 
 # License
 ![https://www.gnu.org/graphics/gplv3-127x51.png](https://www.gnu.org/graphics/gplv3-127x51.png)
