@@ -1,3 +1,10 @@
+/**
+ * @file salibc_test.c
+ * @author Franco Masotti
+ * @date 28 Apr 2016
+ * @brief Test file
+ */
+
 /*
  * salibc_test.c
  *
@@ -22,8 +29,21 @@
 
 #include "salibc.h"
 
+/**
+ * @brief if this flag is defined then the main function in this file is
+ * included.
+ */
 #ifdef SALIBC_TEST
 
+/**
+ * @brief Use:
+ * const MYVARIABLE = value
+ * instead of:
+ * value
+ * or
+ * #define MYVAR value
+ * in your code.
+ */
 int
 main (void)
 {

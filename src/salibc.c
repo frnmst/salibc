@@ -1,3 +1,12 @@
+/**
+ * @file salibc.c
+ * @author Franco Masotti
+ * @date 28 Apr 2016
+ * @brief Implementation file.
+ *
+ * Simple C Array Library.
+ */
+
 /*
  * salibc.c
  *
@@ -20,24 +29,58 @@
  * along with salibc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Simple C Array Library */
-
-/* Use:
- * const MYVARIABLE = value
- * instead of:
- * value
- * or
- * #define MYVAR value
- * in your code.
- */
 #include "salibc.h"
 
+/**
+ * @brief Check if the input memory address points to NULL.
+ *
+ * @param[in] element A generic memory address.
+ *
+ * @retval true Input address points to NULL.
+ * @retval false Input address does not point to NULL.
+ */
 static bool element_null (void *element);
+
+/**
+ * @brief Check if two memory areas overlap.
+ *
+ * @param[in] chunk1 The first generic memory address.
+ * @param[in] chunk2 The second generic memory address.
+ * @param[in] fullsize Full size of the first chunk of memory.
+ *
+ * @retval true The two memory areas overlap.
+ * @retval false The two memory areas do not overlap.
+ *
+ * @warning This function is not reliable.
+ */
 static bool memory_overlaps (void *chunk1, void *chunk2, size_t fullsize);
+
+/**
+ * @brief Delete the array but not its ADT.
+ *
+ * @param[in] a The pointer to an array ADT instance.
+ */
 static void realarray_delete (Array a);
+
+/**
+ * @brief This functions is the same as array_get.
+ */
 static char *array_indexpointer (Array a, int index);
+
+/**
+ * @param[in] a The pointer to an array ADT instance.
+ * @param[in] index The index to be checked.
+ *
+ * @retval true The selected index is part of the array.
+ * @retval false The selected index is not part of the array.
+ */
 static bool array_indexoutofbounds (Array a, int index);
+
+/**
+ * @brief This functions is the same as array_put.
+ */
 static bool array_memcopy (Array a, int index, void *element);
+
 /*
  ***************************
  *General purpose methods. *
@@ -49,10 +92,17 @@ element_null (void *element)
   return (element == NULL);
 }
 
-/* Since memory is not always allocated consecutively, the following controls 
- * may fail because the only check memory addresses and not if that memory 
- * belongs to something else. */
+/**
+ * If this flag is defined memory_overlaps function will work normally,
+ * otherwise it will only return false. By default this flag is deactivated.
+ */
 #ifdef MEMORY_OVERLAP_CHECK
+
+/**
+ * Since memory is not always allocated consecutively, the following controls 
+ * may fail because the only check memory addresses and not if that memory 
+ * belongs to something else.
+ */
 static bool
 memory_overlaps (void *chunk1, void *chunk2, size_t fullsize)
 {
@@ -86,7 +136,10 @@ memory_overlaps (void *chunk1, void *chunk2, size_t fullsize)
  * Mixed methods. *
  ******************
  */
-/* Delete the non-ADT part of the array (as well as some fields of the ADT). */
+
+/**
+ * Delete the non-ADT part of the array (as well as some fields of the ADT).
+ */
 static void
 realarray_delete (Array a)
 {
@@ -123,16 +176,20 @@ array_indexpointer (Array a, int index)
   return (array_pointer (a) + (((size_t) index) * array_size (a)));
 }
 
-/* It is assumed that element has the same size of a->ptr. */
+/**
+ *  It is assumed that element has the same size of a->ptr.
+ */
 static bool
 array_memcopy (Array a, int index, void *element)
 {
   if (array_null (a))
     return false;
 
-  /* Even though the array_indexoutofbounds function is called inside the 
-     array_indexpointer function, this returns NULL, so memcpy would be done on a 
-     dest of NULL. */
+  /**
+   * Even though the array_indexoutofbounds function is called inside the
+   * array_indexpointer function, this returns NULL, so memcpy would be done
+   * on a dest of NULL.
+   */
   if (!element_null (element)
       && !memory_overlaps (a, element, array_fullsize (a))
       && !array_indexoutofbounds (a, index))
@@ -171,7 +228,9 @@ array_length (Array a)
   return (a->nmemb);
 }
 
-/* This shouldn't go out of bounds. */
+/**
+ * This function should not return an out of bound value.
+ */
 size_t
 array_fullsize (Array a)
 {
@@ -188,7 +247,9 @@ array_pointer (Array a)
   return (a->ptr);
 }
 
-/* memcmp works well in checking equality even for floating point numbers. */
+/**
+ * memcmp works well in checking equality even for floating point numbers.
+ */
 bool
 array_equal (Array a1, Array a2)
 {
@@ -204,7 +265,9 @@ array_equal (Array a1, Array a2)
   return false;
 }
 
-/* Array constructor. */
+/**
+ * Array constructor.
+ */
 Array
 array_new (int nmemb, size_t size)
 {
@@ -223,7 +286,9 @@ array_new (int nmemb, size_t size)
 	array_delete (&new_array);
     }
 
-  /* This may be NULL. */
+  /**
+   * This may be NULL.
+   */
   return new_array;
 }
 
@@ -232,18 +297,19 @@ array_delete (Array * a_ref)
 {
   if (!element_null (a_ref) && !array_null (*a_ref))
     {
-      /* Free the real array. */
+      /**
+       * Free the real array.
+       */
       realarray_delete (*a_ref);
-      /* Free the ADT. */
+      /**
+       * Free the ADT.
+       */
       (*a_ref)->size = 0;
       free (*a_ref);
       *a_ref = NULL;
     }
 }
 
-/* true = success
- * false = failure
- */
 bool
 array_put (Array a, int index, void *element)
 {
@@ -251,7 +317,6 @@ array_put (Array a, int index, void *element)
 }
 
 
-/* Set the every index of array with the same value. */
 bool
 array_set (Array a, void *element)
 {
@@ -266,8 +331,7 @@ array_set (Array a, void *element)
   return true;
 }
 
-/* Get pointer to index. If you cast to the correct pointer type, then
- * reference it you get the stored value in the index.
+/**
  * This is an interface to array_indexpointer.
  */
 char *
@@ -285,12 +349,16 @@ array_copy (Array a1)
   if (array_null (a1))
     return NULL;
 
-  /* Allocate a new array with the same ADT characteristics. */
+  /**
+   * Allocate a new array with the same ADT characteristics.
+   */
   a2 = array_new (array_length (a1), array_size (a1));
   if (array_null (a2))
     return NULL;
 
-  /* Copy the real array using the previously defined functions. */
+  /**
+   * Copy the real array using the previously defined functions.
+   */
   for (i = 0; i < array_length (a1); i++)
     if (!array_memcopy (a2, i, array_indexpointer (a1, i)))
       return NULL;
@@ -307,22 +375,32 @@ array_resize (Array a, int new_length)
   if (array_null (a))
     return NULL;
 
-  /* Invalid new length. */
+  /**
+   * Invalid new length.
+   */
   if (new_length < 0)
     return false;
-  /* new_length is set to 0 -> leave ADT, but delete internal array. */
+  /**
+   * new_length is set to 0 -> leave ADT, but delete internal array.
+   */
   else if (new_length == 0)
     {
       realarray_delete (a);
       return true;
     }
-  /* Same size -> do nothing. */
+  /**
+   * Same size -> do nothing.
+   */
   else if (array_length (a) == new_length)
     return true;
-  /* Array's length != new_length, so realloc can now be used directly. */
+  /**
+   * Array's length != new_length, so realloc can now be used directly.
+   */
   else
     {
-      /* Safe realloc (to avoid losing the stored array if realloc fails). */
+      /**
+       * Safe realloc (to avoid losing the stored array if realloc fails).
+       */
       tmp =
 	realloc (array_pointer (a),
 		 array_fullsize (a) +
@@ -331,9 +409,9 @@ array_resize (Array a, int new_length)
 	a->ptr = tmp;
       else
 	return false;
-
-      /* memset to 0 new part of the array. 
-       * To do this we must go to the first byte of the new array and put 0 
+      /**
+       * memset to 0 new part of the array.
+       * To do this we must go to the first byte of the new array and put 0
        * until we get to (memdiff * a->size) bytes.
        */
       memdiff = new_length - array_length (a);
@@ -341,14 +419,18 @@ array_resize (Array a, int new_length)
 	memset (array_pointer (a) + array_fullsize (a) + array_size (a), 0,
 		((size_t) memdiff) * array_size (a));
 
-      /* Set the new array length. */
+      /**
+       * Set the new array length.
+       */
       a->nmemb = new_length;
     }
 
   return true;
 }
 
-/* This alters the input. */
+/**
+ * This function alters the input.
+ */
 bool
 array_append (Array a, void *element)
 {
@@ -368,7 +450,9 @@ array_trim (Array a)
   char *element, *element_copy;
 
   element = array_indexpointer (a, initial_length - 1);
-  /* Copy *element int *element_copy.  */
+  /**
+   * Copy *element int *element_copy.
+   */
   element_copy = malloc (array_size (a));
   memcpy (element_copy, element, array_size (a));
 
@@ -378,14 +462,15 @@ array_trim (Array a)
     return NULL;
 }
 
-/* A new array is created: new_array={a1,a2} */
 Array
 array_merge (Array a1, Array a2)
 {
   Array new_array;
   int i, j, total_length = array_length (a1) + array_length (a2);
 
-  /* Safety controls. */
+  /**
+   * Safety controls.
+   */
   if ((array_null (a1) && array_null (a2)) || (array_size (a1) !=
 					       array_size (a2)))
     return NULL;
@@ -407,4 +492,3 @@ array_merge (Array a1, Array a2)
 
   return new_array;
 }
-

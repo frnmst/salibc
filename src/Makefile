@@ -61,5 +61,8 @@ salibc: salibc.o salibc_test.o
 	@$(CC) -o $@.out $^
 	@echo "$(CC) $(CFLAGS) $(CSTANDARD) $(LIBS) -DFSALIBC_TEST -o $@.out"
 
+doxygen:
+	@doxygen doxy.conf
+
 # to protect files with the following names, the .PHONY rule is used
 .PHONY: default all clean indent $(EXECUTABLES)
