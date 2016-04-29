@@ -29,11 +29,13 @@
 
 #include "salibc.h"
 
+#if defined (SALIBC_TEST) || DOXYGEN
+
 /**
  * @brief if this flag is defined then the main function in this file is
  * included.
  */
-#if defined (SALIBC_TEST) || DOXYGEN
+#define SALIBC_TEST
 
 /**
  * @note Use:

@@ -93,6 +93,7 @@ element_null (void *element)
 }
 
 #if defined (MEMORY_OVERLAP_CHECK) || DOXYGEN
+
 /**
  * @brief If this flag is defined memory_overlaps function will work normally,
  * otherwise it will only return false. By default this flag is deactivated.
