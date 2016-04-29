@@ -6,33 +6,47 @@ Simple Array C Library
 The methods accessible to the user (the non `static` ones) are the ones 
 described in `salibc.h`.
 
-To generate the ducumentation, you need to install `doxygen`, `texlive-core` 
-and `texlive-latexextra` (these are the names under Parabola GNU/Linux-libre 
-distro). 
-
-You can then execute the following:
+The first thing to do i to move to the `src` directory:
 ```
-$ cd src && make doxygen && cd latex && make
+$ cd src
 ```
 
-This will generate both LaTeX (`src/latex/refman.pdf`) and HTML 
-(`src/html/index.html`) documentation. 
+To generate the documentation, you need to install the following packages:
+```
+doxygen
+texlive-core
+texlive-latexextra
+```
 
-If you are only interested in the HTML form you don't need to install the 
-LaTeX packages.
+These are the names under Parabola GNU/Linux-libre distro. 
+
+You can then execute the following if you are only interested in the HTML form:
+```
+$ make doxygen
+```
+
+Or, if you want a pdf file (`../refman.pdf`):
+```
+$ make doxygenlatex
+```
+
+You can also remove the whole documentation like this:
+```
+$ make cleandoxygen
+```
 
 The doxygen configuration file has been generated with the following:
 ```
 $ doxygen -g doxy.conf
 ```
 
-and then edited with the options I thought were useful.
+where `doxy.conf` was edited with the options I thought were useful.
 
 ##Test
 
 You can test the library with the following:
 ```
-$ cd src && make
+$ make
 ```
 
 This will generate an executable file called `salibc.out`.

@@ -28,6 +28,10 @@
  */
 
 #ifndef SALIBC
+
+/**
+ * @brief Include the main header.
+ */
 #define SALIBC
 
 /**
@@ -48,6 +52,10 @@
 
 /**
  * @brief Array Abstract Data Type.
+ *
+ * @struct Array
+ *
+ * @typedef struct Array *Array
  */
 typedef struct Array
 {

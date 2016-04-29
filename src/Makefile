@@ -64,5 +64,11 @@ salibc: salibc.o salibc_test.o
 doxygen:
 	@doxygen doxy.conf
 
+doxygenlatex: doxygen
+	@cd latex; make pdf; mv refman.pdf ../../.; cd ..
+
+cleandoxygen:
+	@rm -rf html latex ../refman.pdf
+
 # to protect files with the following names, the .PHONY rule is used
 .PHONY: default all clean indent $(EXECUTABLES)

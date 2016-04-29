@@ -33,10 +33,10 @@
  * @brief if this flag is defined then the main function in this file is
  * included.
  */
-#ifdef SALIBC_TEST
+#if defined (SALIBC_TEST) || DOXYGEN
 
 /**
- * @brief Use:
+ * @note Use:
  * const MYVARIABLE = value
  * instead of:
  * value
